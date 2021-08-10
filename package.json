@@ -2,7 +2,7 @@
   "name": "@valora/indexer",
   "description": "Store events on the Celo blockchain into a relational database",
   "version": "0.0.5",
-  "private": true,
+  "main": "dist/index.js",
   "author": "Valora Inc",
   "license": "Apache-2.0",
   "scripts": {
@@ -10,9 +10,9 @@
     "gcp-build": "npm run build",
     "test": "cp config/config.test.env .env; DB_TYPE=sqlite jest",
     "test:watch": "yarn test --watch",
-    "lint": "eslint --ext=.tsx,.ts src/ test/",
-    "start": "node ./dist/index.js",
-    "start:local": "yarn build; cp config/config.local.env .env; node --inspect ./dist/index.js",
+    "lint": "eslint --ext=.tsx,.ts src/ test/ bin/",
+    "start": "node ./dist/bin/indexer.js",
+    "start:local": "yarn build; cp config/config.local.env .env; node --inspect ./dist/bin/indexer.js",
     "deploy": "./deploy.sh"
   },
   "dependencies": {
