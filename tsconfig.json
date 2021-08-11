@@ -12,8 +12,9 @@
     "sourceMap": true,
     "strict": true,
     "target": "es6",
-    "lib": ["es7", "esnext"]
+    "lib": ["es7", "esnext"],
+    "rootDirs": ["src", "bin"]
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "bin/**/*"],
   "exclude": ["node_modules", "vendor", ".bundle"]
 }
