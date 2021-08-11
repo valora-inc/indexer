@@ -8,8 +8,9 @@
   "scripts": {
     "build": "tsc",
     "gcp-build": "npm run build",
-    "test": "cp config/config.test.env .env; DB_TYPE=sqlite jest",
+    "test": "cp config/config.test.env .env; DB_TYPE=sqlite jest && prettier --check \"./{src,bin/test}/**/*.ts\"",
     "test:watch": "yarn test --watch",
+    "format": "prettier --loglevel error --write \"./{src,bin/test}/**/*.ts\"",
     "lint": "eslint --ext=.tsx,.ts src/ test/ bin/",
     "start": "node ./dist/bin/indexer.js",
     "start:local": "yarn build; cp config/config.local.env .env; node --inspect ./dist/bin/indexer.js",
@@ -48,6 +49,7 @@
     "eslint-plugin-react-native": "^3.11.0",
     "jest": "^27.0.6",
     "jest-junit": "^12.2.0",
+    "prettier": "^2.3.2",
     "sqlite3": "^5.0.2",
     "ts-jest": "^27.0.4",
     "typescript": "~4.3.2"
