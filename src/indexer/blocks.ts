@@ -8,5 +8,8 @@ export async function getLastBlock(key: string) {
 }
 
 export function setLastBlock(key: string, block: number) {
-  return database(TABLE_NAME).insert({ key, lastBlock: block }).onConflict('key').merge()
+  return database(TABLE_NAME)
+    .insert({ key, lastBlock: block })
+    .onConflict('key')
+    .merge()
 }

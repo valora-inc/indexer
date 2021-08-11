@@ -6,6 +6,7 @@ config/config.mainnet.env
 
 # Exclude compiled .js files
 *.js
+!.prettierrc.js
 !.eslintrc.js
 !jest.config.js
 *.js.map

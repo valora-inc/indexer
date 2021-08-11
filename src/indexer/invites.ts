@@ -18,7 +18,7 @@ export async function handleInvites() {
       token,
       value,
       paymentId,
-    })
+    }),
   )
   await indexEvents(
     Contract.Escrow,
@@ -31,7 +31,7 @@ export async function handleInvites() {
       token,
       value,
       paymentId,
-    })
+    }),
   )
   await indexEvents(
     Contract.Escrow,
@@ -44,6 +44,6 @@ export async function handleInvites() {
       token,
       value,
       paymentId,
-    })
+    }),
   )
 }

@@ -10,6 +10,6 @@ export async function handlecUsdTransfers() {
       to,
       value,
       currency: 'cUSD',
-    })
+    }),
   )
 }
