@@ -9,6 +9,6 @@ export async function handleAttestations() {
       identifier,
       account,
       issuer,
-    })
+    }),
   )
 }

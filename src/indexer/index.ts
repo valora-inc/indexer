@@ -55,7 +55,7 @@ export async function indexEvents(
   contractKey: Contract,
   contractEvent: Event,
   tableName: string,
-  payloadMapper: (event: EventLog) => any
+  payloadMapper: (event: EventLog) => any,
 ) {
   const key = `${contractKey}_${contractEvent}`
 
@@ -77,25 +77,29 @@ export async function indexEvents(
       if (events.length > 0) {
         console.info(
           TAG,
-          `${key} - Got ${events.length} events between blocks [${fromBlock}, ${toBlock}]`
+          `${key} - Got ${events.length} events between blocks [${fromBlock}, ${toBlock}]`,
         )
       }
       fromBlock = toBlock + 1
       // Wrap write to event table and block index in a transaction so that the
       // update is atomic.
       await database.transaction(async (trx) => {
-        await concurrentMap(CONCURRENT_EVENTS_HANDLED, events, async (event) => {
-          const { transactionHash, logIndex, blockNumber, blockHash } = event
-          await database(tableName)
-            .insert({
-              transactionHash,
-              logIndex,
-              blockNumber,
-              blockHash,
-              ...payloadMapper(event),
-            })
-            .transacting(trx)
-        })
+        await concurrentMap(
+          CONCURRENT_EVENTS_HANDLED,
+          events,
+          async (event) => {
+            const { transactionHash, logIndex, blockNumber, blockHash } = event
+            await database(tableName)
+              .insert({
+                transactionHash,
+                logIndex,
+                blockNumber,
+                blockHash,
+                ...payloadMapper(event),
+              })
+              .transacting(trx)
+          },
+        )
         await setLastBlock(key, toBlock).transacting(trx)
       })
     }

@@ -4,12 +4,16 @@ import { ENVIRONMENT, PORT, VERSION, WEB3_PROVIDER_URL } from './config'
 import { initDatabase } from './database/db'
 import { pollers } from './polling'
 
-export default async function initApp() : Promise<express.Application> {
+export default async function initApp(): Promise<express.Application> {
   if (!WEB3_PROVIDER_URL) {
     throw new Error('You must set the WEB3_PROVIDER_URL environment variable.')
   }
 
-  console.info('Service starting with environment, version:', ENVIRONMENT, VERSION)
+  console.info(
+    'Service starting with environment, version:',
+    ENVIRONMENT,
+    VERSION,
+  )
   const START_TIME = Date.now()
 
   /**
@@ -30,7 +34,8 @@ export default async function initApp() : Promise<express.Application> {
     res.status(200).json({
       version: VERSION,
       serviceStartTime: new Date(START_TIME).toUTCString(),
-      serviceRunDuration: Math.floor((Date.now() - START_TIME) / 60000) + ' minutes',
+      serviceRunDuration:
+        Math.floor((Date.now() - START_TIME) / 60000) + ' minutes',
     })
   })
   app.get('/_ah/start', (req: any, res: any) => {

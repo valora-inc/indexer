@@ -24,5 +24,5 @@ export const pollers = [
     } finally {
       end()
     }
-  }, poller.interval)
+  }, poller.interval),
 )

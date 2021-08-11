@@ -8,6 +8,6 @@ export async function handleAccountMappings() {
     ({ returnValues: { account, walletAddress } }) => ({
       accountAddress: account,
       walletAddress,
-    })
+    }),
   )
 }
