@@ -26,7 +26,7 @@ export async function initDatabase() {
   console.info('Running Migrations')
 
   await database.migrate.latest({
-    directory: './dist/migrations',
+    directory: './dist/src/migrations',
     loadExtensions: ['.js'],
   })
 
