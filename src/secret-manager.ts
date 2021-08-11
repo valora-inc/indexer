@@ -1,8 +1,8 @@
 import {SecretManagerServiceClient} from '@google-cloud/secret-manager'
+import dotenv from 'dotenv'
 
 /*
- * Loads a JSON object from Google Secret Manager. Copies each property into
- * process.env. Fails if any property values are not strings.
+ * Loads a dotenv config from Google Secret Manager and merges with process.env.
  */
 export default async function loadSecretEnvironment(name: string, client?: SecretManagerServiceClient) {
   if (!client) {
@@ -13,11 +13,7 @@ export default async function loadSecretEnvironment(name: string, client?: Secre
   if (!rawPayload) {
     throw new RangeError(`Missing value for secret ${name}`)
   }
-  const payload = JSON.parse(rawPayload)
-  const nonString = Object.values(payload).find(value => typeof value !== 'string')
-  if (nonString) {
-    throw new RangeError(`Value ${nonString} is not a string`)
-  }
 
-  process.env = { ...process.env, ...payload}
+  const config = dotenv.parse(rawPayload)
+  process.env = { ...process.env, ...config}
 }

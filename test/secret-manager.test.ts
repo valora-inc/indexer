@@ -14,7 +14,7 @@ describe('secret-manager', () => {
         accessSecretVersion: async () => {
           return [{
             payload: {
-              data: '{"__TEST_FOO": "bar", "__TEST_ZOO": "cat"}'
+              data: '__TEST_FOO=bar\n__TEST_ZOO=cat'
             }
           }]
         }
@@ -30,34 +30,6 @@ describe('secret-manager', () => {
         accessSecretVersion: async () => {
           return [{
             payload: {}
-          }]
-        }
-      } as unknown as SecretManagerServiceClient
-
-      await expect(loadSecretEnvironment('/foo', fakeClient)).rejects.toThrow()
-    })
-
-    it('fails if secret is not valid JSON', async () => {
-      const fakeClient = {
-        accessSecretVersion: async () => {
-          return [{
-            payload: {
-              data: '{'
-            }
-          }]
-        }
-      } as unknown as SecretManagerServiceClient
-
-      await expect(loadSecretEnvironment('/foo', fakeClient)).rejects.toThrow()
-    })
-
-    it('fails if secret contains non-string values', async () => {
-      const fakeClient = {
-        accessSecretVersion: async () => {
-          return [{
-            payload: {
-              data: '{"__TEST_FOO": "bar", "__TEST_ZOO": true}'
-            }
           }]
         }
       } as unknown as SecretManagerServiceClient
