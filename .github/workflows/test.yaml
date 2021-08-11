@@ -31,5 +31,4 @@ jobs:
           node-version: '12'
           check-latest: true
       - run: yarn
-      - run: yarn build
       - run: yarn lint
