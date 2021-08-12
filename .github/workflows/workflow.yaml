@@ -4,7 +4,7 @@ on:
   # Run on pushes to main..
   push:
     branches:
-      - cd0
+      - main
   # ..and any pull request.
   pull_request:
 
@@ -34,7 +34,7 @@ jobs:
       - run: yarn lint
   deploy-alfajores:
     name: Deploy alfajores
-    if: github.ref == 'refs/heads/cd0'
+    if: github.ref == 'refs/heads/main'
     needs:
       - unit
       - lint
