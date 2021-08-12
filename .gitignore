@@ -1,7 +1,6 @@
 # Exclude secrets
 serviceAccountKey.json
 .env
-config/config.mainnet.env
 
 # Exclude compiled .js files
 *.js
