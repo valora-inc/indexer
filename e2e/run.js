@@ -109,6 +109,8 @@ async function main() {
       kubectl(['apply', '-f', kubernetesYaml])
 
       // Wait for Pods to start...
+      await sleep(5000)  // Give kubernetes a moment to create initial resources
+      kubectl(['wait', '--for=condition=Available', 'deployment/indexer'])
       kubectl(['wait', '--for=condition=Ready', '--timeout=60s', 'pod', '-l', 'app=indexer'])
       kubectl(['wait', '--for=condition=Ready', '--timeout=60s', 'pod', '-l', 'app=postgres'])      
 

@@ -83,10 +83,10 @@ kind: ConfigMap
 metadata:
   name: indexer
 data:
-  ENVIRONMENT: 'alfajores'
+  ENVIRONMENT: 'mainnet'
   PORT: '80'
   POLLING_INTERVAL: '1000'
-  WEB3_PROVIDER_URL: 'https://alfajores-forno.celo-testnet.org'
+  WEB3_PROVIDER_URL: 'https://rc1-forno.celo-testnet.org'
   DB_TYPE: 'postgres'
   DB_HOST: 'postgres'
   DB_USERNAME: 'postgres'
