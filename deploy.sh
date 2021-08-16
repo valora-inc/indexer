@@ -25,7 +25,7 @@ echo 'Copying over config file'
 cp "config/config.${NETWORK}.env" .env
 
 echo 'Deploying to gcloud'
-gcloud --project ${PROJECT} app deploy -q "app.${NETWORK}.yaml"
+gcloud --project ${PROJECT} app deploy -q "app.yaml"
 
 echo 'Hitting service url to trigger update'
 # This seems to be necessary to ensure get App Engine starts the service
