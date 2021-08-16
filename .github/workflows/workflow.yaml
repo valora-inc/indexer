@@ -32,12 +32,23 @@ jobs:
           check-latest: true
       - run: yarn
       - run: yarn lint
+  end-to-end:
+    name: end-to-end
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+          check-latest: true
+      - run: node e2e/run.js
   deploy-alfajores:
     name: Deploy alfajores
     if: github.ref == 'refs/heads/main'
     needs:
       - unit
       - lint
+      - end-to-end
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -53,6 +64,7 @@ jobs:
     needs:
       - unit
       - lint
+      - end-to-end
       - deploy-alfajores
     runs-on: ubuntu-latest
     steps:
