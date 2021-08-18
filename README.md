@@ -24,3 +24,11 @@ Start the indexer:
 ```
 yarn start:local
 ```
+
+## Running on Kubernetes
+
+You can use the example [kubernetes.yaml](kubernetes.yaml) directly:
+
+```
+kubectl apply -f https://raw.githubusercontent.com/valora-inc/indexer/main/kubernetes.yaml
+```
