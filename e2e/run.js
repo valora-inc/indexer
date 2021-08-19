@@ -1,4 +1,5 @@
 const { spawn, spawnSync } = require('child_process')
+const { Client } = require('pg')
 
 const debug = false
 const createPostgresContainer = true
@@ -33,23 +34,28 @@ function docker(args, options) {
 }
 
 async function psql(statement, timeoutSeconds) {
+
   timeoutSeconds = timeoutSeconds || 0
   let now = Date.now()
   const end = now + timeoutSeconds*1000
 
   while (true) {
     try {
-      const result = docker(['exec', postgresContainerName,
-                             'psql',
-                             '-t',
-                             '--csv',
-                             '-U', 'postgres',
-                             '-d', 'indexer',
-                             '-c', statement],
-                            {stdio: 'pipe'})
-      if (result.output[1]) {
-        const rows = result.output[1].toString().trim().split('\n')
-        return rows
+      // Easiest to re-create the client pg allows client to connect once and
+      // there might be a race where we connect to postgres, get disconnected,
+      // and then need to re-connect.
+      const client = new Client({
+        user: 'postgres',
+        host: 'localhost',
+        database: 'indexer',
+        password: 'docker',
+        port: 5432,
+      })
+      await client.connect()
+
+      const result = await client.query(statement)
+      if (result.rowCount) {
+        return result.rows
       }
       throw new Error('Empty result')
     } catch (error) {
