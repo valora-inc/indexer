@@ -106,8 +106,8 @@ async function main() {
   
   indexerChildProcess = spawn('node', ['./dist/bin/indexer.js'], {stdio: 'inherit'})
   console.log('Waiting for DB to have some contents...')
-  await psql('SELECT * FROM transfers LIMIT 1;', 30)
-  console.log('DB has some contents')
+  const rows = await psql('SELECT * FROM transfers LIMIT 1;', 30)
+  console.log(`DB has some contents: ${JSON.stringify(rows, null, 2)}`)
 
   // TODO: run more checks on the DB to ensure things look reasonable.
   process.exit(0)
