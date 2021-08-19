@@ -6,6 +6,8 @@ const createPostgresContainer = true
 const deletePostgresContainer = true
 
 const postgresContainerName = 'indexer-postgres-e2e'
+const postgresDatabase = 'indexer'
+const postgresPassword = 'docker'
 
 function run(command, args, options) {
   options = options || {}
@@ -47,8 +49,8 @@ async function psql(statement, timeoutSeconds) {
       const client = new Client({
         user: 'postgres',
         host: 'localhost',
-        database: 'indexer',
-        password: 'docker',
+        database: postgresDatabase,
+        password: postgresPassword,
         port: 5432,
       })
       await client.connect()
@@ -96,15 +98,21 @@ async function main() {
             '--rm',
             '-d',
             '-p', '5432:5432',
-            '-e', 'POSTGRES_DB=indexer',
-            '-e', 'POSTGRES_PASSWORD=docker',
+            '-e', `POSTGRES_DB=${postgresDatabase}`,
+            '-e', `POSTGRES_PASSWORD=${postgresPassword}`,
             'postgres'])
   }
 
   // Ensure DB is up before starting indexer
   await psql('SELECT 1;', 30)
   
-  indexerChildProcess = spawn('node', ['./dist/bin/indexer.js'], {stdio: 'inherit'})
+  indexerChildProcess = spawn('node', ['./dist/bin/indexer.js'], {
+    stdio: 'inherit',
+    env: {
+      WEB3_PROVIDER_URL: 'https://alfajores-forno.celo-testnet.org',
+      ...process.env,
+    }
+  })
   console.log('Waiting for DB to have some contents...')
   const rows = await psql('SELECT * FROM transfers LIMIT 1;', 30)
   console.log(`DB has some contents: ${JSON.stringify(rows, null, 2)}`)
