@@ -46,8 +46,7 @@ jobs:
       - run: yarn e2e
   publish-image:
     name: Publish Docker image
-    # TODO: Uncomment before merging.
-    # if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     needs:
       - unit
       - lint
