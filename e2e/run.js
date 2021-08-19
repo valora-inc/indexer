@@ -1,13 +1,11 @@
 const { spawn, spawnSync } = require('child_process')
-const { Client } = require('pg')
+const db = require('./db')
 
 const debug = false
 const createPostgresContainer = true
 const deletePostgresContainer = true
 
 const postgresContainerName = 'indexer-postgres-e2e'
-const postgresDatabase = 'indexer'
-const postgresPassword = 'docker'
 
 function run(command, args, options) {
   options = options || {}
@@ -33,42 +31,6 @@ function docker(args, options) {
     }
   }
   return run('docker', args, options)
-}
-
-async function psql(statement, timeoutSeconds) {
-
-  timeoutSeconds = timeoutSeconds || 0
-  let now = Date.now()
-  const end = now + timeoutSeconds*1000
-
-  while (true) {
-    try {
-      // Easiest to re-create the client pg allows client to connect once and
-      // there might be a race where we connect to postgres, get disconnected,
-      // and then need to re-connect.
-      const client = new Client({
-        user: 'postgres',
-        host: 'localhost',
-        database: postgresDatabase,
-        password: postgresPassword,
-        port: 5432,
-      })
-      await client.connect()
-
-      const result = await client.query(statement)
-      if (result.rowCount) {
-        return result.rows
-      }
-      throw new Error('Empty result')
-    } catch (error) {
-      now = Date.now()
-      if (now > end) {
-        console.log(`Timed out executing '${statement}'`)
-        throw error
-      }
-      await sleep(1000)
-    }
-  }
 }
 
 function sleep(milliseconds) {
@@ -98,13 +60,13 @@ async function main() {
             '--rm',
             '-d',
             '-p', '5432:5432',
-            '-e', `POSTGRES_DB=${postgresDatabase}`,
-            '-e', `POSTGRES_PASSWORD=${postgresPassword}`,
+            '-e', `POSTGRES_DB=${db.postgresDatabase}`,
+            '-e', `POSTGRES_PASSWORD=${db.postgresPassword}`,
             'postgres'])
   }
 
   // Ensure DB is up before starting indexer
-  await psql('SELECT 1;', 30)
+  await db.psql('SELECT 1;', 30)
   
   indexerChildProcess = spawn('node', ['./dist/bin/indexer.js'], {
     stdio: 'inherit',
@@ -114,7 +76,7 @@ async function main() {
     }
   })
   console.log('Waiting for DB to have some contents...')
-  const rows = await psql('SELECT * FROM transfers LIMIT 1;', 30)
+  const rows = await db.psql('SELECT * FROM transfers LIMIT 1;', 30)
   console.log(`DB has some contents: ${JSON.stringify(rows, null, 2)}`)
 
   // TODO: run more checks on the DB to ensure things look reasonable.
