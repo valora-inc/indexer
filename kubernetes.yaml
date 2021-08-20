@@ -16,7 +16,7 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 4Gi
+            storage: 256Gi
   template:
     metadata:
       labels:
@@ -72,7 +72,7 @@ spec:
     spec:
       containers:
         - name: indexer
-          image: gcr.io/valora-inc/indexer:latest
+          image: gcr.io/valora-inc/indexer:a0f47727ce7abd43a1bcc87b48abecb22b8ef5ce
           envFrom:
             - configMapRef:
                 name: indexer
