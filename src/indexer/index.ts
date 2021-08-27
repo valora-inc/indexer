@@ -14,6 +14,7 @@ export enum Contract {
   Escrow = 'Escrow',
   Attestations = 'Attestations',
   cUsd = 'cUsd',
+  cEur = 'cEur',
 }
 
 // TODO: Add types for the events of each contract.
@@ -47,6 +48,10 @@ const contracts: { [contract in Contract]: ContractInfo } = {
   },
   [Contract.cUsd]: {
     contract: (kit) => kit.contracts.getStableToken(StableToken.cUSD),
+    batchSize: 500,
+  },
+  [Contract.cEur]: {
+    contract: (kit) => kit.contracts.getStableToken(StableToken.cEUR),
     batchSize: 500,
   },
 }
