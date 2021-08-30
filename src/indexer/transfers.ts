@@ -12,4 +12,15 @@ export async function handlecUsdTransfers() {
       currency: 'cUSD',
     }),
   )
+  await indexEvents(
+    Contract.cEur,
+    Event.Transfer,
+    'transfers',
+    ({ returnValues: { from, to, value } }) => ({
+      from,
+      to,
+      value,
+      currency: 'cEUR',
+    }),
+  )
 }
