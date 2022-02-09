@@ -8,13 +8,13 @@ import {
 import { handleAccountMappings } from './indexer/accounts'
 import { handleAttestations } from './indexer/attestations'
 import { handleInvites } from './indexer/invites'
-import { handlecUsdTransfers } from './indexer/transfers'
+import { handleTransfers } from './indexer/transfers'
 
 export const pollers = [
   { fx: handleInvites, interval: INVITES_POLLING_INTERVAL },
   { fx: handleAccountMappings, interval: ACCOUNTS_POLLING_INTERVAL },
   { fx: handleAttestations, interval: ATTESTATIONS_POLLING_INTERVAL },
-  { fx: handlecUsdTransfers, interval: TRANSFERS_POLLING_INTERVAL },
+  { fx: handleTransfers, interval: TRANSFERS_POLLING_INTERVAL },
 ].map((poller) =>
   AsyncPolling(async (end) => {
     try {

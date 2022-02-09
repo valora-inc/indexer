@@ -1,6 +1,6 @@
 import { Contract, Event, indexEvents } from './index'
 
-export async function handlecUsdTransfers() {
+export async function handleTransfers() {
   await indexEvents(
     Contract.cUsd,
     Event.Transfer,
@@ -21,6 +21,17 @@ export async function handlecUsdTransfers() {
       to,
       value,
       currency: 'cEUR',
+    }),
+  )
+  await indexEvents(
+    Contract.cReal,
+    Event.Transfer,
+    'transfers',
+    ({ returnValues: { from, to, value } }) => ({
+      from,
+      to,
+      value,
+      currency: 'cREAL',
     }),
   )
 }
