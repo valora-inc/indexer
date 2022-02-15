@@ -1,6 +1,6 @@
-import { concurrentMap } from '@celo/base'
 import { ContractKit, StableToken } from '@celo/contractkit'
 import { BaseWrapper } from '@celo/contractkit/lib/wrappers/BaseWrapper'
+import asyncPool from 'tiny-async-pool'
 import { EventLog } from 'web3-core'
 import { database } from '../database/db'
 import { getContractKit } from '../util/utils'
@@ -15,6 +15,7 @@ export enum Contract {
   Attestations = 'Attestations',
   cUsd = 'cUsd',
   cEur = 'cEur',
+  cReal = 'cReal',
 }
 
 // TODO: Add types for the events of each contract.
@@ -54,6 +55,10 @@ const contracts: { [contract in Contract]: ContractInfo } = {
     contract: (kit) => kit.contracts.getStableToken(StableToken.cEUR),
     batchSize: 500,
   },
+  [Contract.cReal]: {
+    contract: (kit) => kit.contracts.getStableToken(StableToken.cREAL),
+    batchSize: 500,
+  },
 }
 
 export async function indexEvents(
@@ -89,22 +94,18 @@ export async function indexEvents(
       // Wrap write to event table and block index in a transaction so that the
       // update is atomic.
       await database.transaction(async (trx) => {
-        await concurrentMap(
-          CONCURRENT_EVENTS_HANDLED,
-          events,
-          async (event) => {
-            const { transactionHash, logIndex, blockNumber, blockHash } = event
-            await database(tableName)
-              .insert({
-                transactionHash,
-                logIndex,
-                blockNumber,
-                blockHash,
-                ...payloadMapper(event),
-              })
-              .transacting(trx)
-          },
-        )
+        await asyncPool(CONCURRENT_EVENTS_HANDLED, events, async (event) => {
+          const { transactionHash, logIndex, blockNumber, blockHash } = event
+          await database(tableName)
+            .insert({
+              transactionHash,
+              logIndex,
+              blockNumber,
+              blockHash,
+              ...payloadMapper(event),
+            })
+            .transacting(trx)
+        })
         await setLastBlock(key, toBlock).transacting(trx)
       })
     }
