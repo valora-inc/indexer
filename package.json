@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc",
     "gcp-build": "npm run build",
-    "test": "cp config/config.test.env .env; DB_TYPE=sqlite jest && prettier --check \"./{src,bin/test}/**/*.ts\"",
+    "test": "cp config/config.test.env .env; DB_TYPE=sqlite jest --coverage && prettier --check \"./{src,bin/test}/**/*.ts\"",
     "test:watch": "yarn test --watch",
     "format": "prettier --loglevel error --write \"./{src,bin/test}/**/*.ts\"",
     "lint": "eslint --ext=.tsx,.ts src/ test/ bin/",
