@@ -29,6 +29,6 @@ gcloud --project ${PROJECT} app deploy -q "app.yaml"
 
 echo 'Hitting service url to trigger update'
 # This seems to be necessary to ensure get App Engine starts the service
-curl "https://indexer3-dot-${PROJECT}.appspot.com" > /dev/null 2>&1
+curl "https://indexer4-dot-${PROJECT}.appspot.com" > /dev/null 2>&1
 
 echo "Done deployment."
