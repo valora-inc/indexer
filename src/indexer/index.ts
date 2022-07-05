@@ -19,7 +19,7 @@ export enum Contract {
   cReal = 'cReal',
   mCUsd = 'mCUsd',
   mCEur = 'mCEur',
-  mCReal = 'mCReal'
+  mCReal = 'mCReal',
 }
 
 // TODO: Add types for the events of each contract.
@@ -65,15 +65,15 @@ const contracts: { [contract in Contract]: ContractInfo } = {
   },
   [Contract.mCUsd]: {
     contract: (kit) => kit.contracts.getErc20(MCUSD_ADDRESS!),
-    batchSize: 500
+    batchSize: 500,
   },
   [Contract.mCEur]: {
     contract: (kit) => kit.contracts.getErc20(MCEUR_ADDRESS!),
-    batchSize: 500
+    batchSize: 500,
   },
   [Contract.mCReal]: {
     contract: (kit) => kit.contracts.getErc20(MCREAL_ADDRESS!),
-    batchSize: 500
+    batchSize: 500,
   },
 }
 
