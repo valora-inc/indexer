@@ -34,4 +34,37 @@ export async function handleTransfers() {
       currency: 'cREAL',
     }),
   )
+  await indexEvents(
+    Contract.mcUsd,
+    Event.Transfer,
+    'transfers',
+    ({ returnValues: { from, to, value } }) => ({
+      from,
+      to,
+      value,
+      currency: 'mcUSD',
+    }),
+  )
+  await indexEvents(
+    Contract.mcEur,
+    Event.Transfer,
+    'transfers',
+    ({ returnValues: { from, to, value } }) => ({
+      from,
+      to,
+      value,
+      currency: 'mcEUR',
+    }),
+  )
+  await indexEvents(
+    Contract.mcReal,
+    Event.Transfer,
+    'transfers',
+    ({ returnValues: { from, to, value } }) => ({
+      from,
+      to,
+      value,
+      currency: 'mcREAL',
+    }),
+  )
 }
