@@ -122,7 +122,12 @@ export async function indexEvents(
             })
             .transacting(trx)
         })
-        await setLastBlock(key, toBlock).transacting(trx)
+        if (events.length > 0) {
+          await setLastBlock(
+            key,
+            events[events.length - 1].blockNumber,
+          ).transacting(trx)
+        }
       })
     }
   } catch (error) {
