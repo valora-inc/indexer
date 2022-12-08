@@ -14,6 +14,8 @@ describe('handleTransfers', () => {
       },
     }
     const contractToCurrency = {
+      // uses hardcoded keys like cUsd instead of Contract.cUsd because these shouldn't actually change. They're saved
+      //  to the DB and used in queries. So if a value in Contract changes, we want a test to fail.
       cUsd: 'cUSD',
       cEur: 'cEUR',
       cReal: 'cREAL',
