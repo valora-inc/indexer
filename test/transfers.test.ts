@@ -22,6 +22,7 @@ describe('handleTransfers', () => {
       mCUsd: 'mCUSD',
       mCEur: 'mCEUR',
       mCReal: 'mCREAL',
+      celo: 'CELO',
     }
     const indexEventsMock = jest
       .fn()

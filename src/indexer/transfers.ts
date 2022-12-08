@@ -33,6 +33,10 @@ export async function handleTransfers() {
       contract: Contract.mCReal,
       currency: 'mCREAL',
     },
+    {
+      contract: Contract.celo,
+      currency: 'CELO',
+    },
   ]
   await Promise.all(
     contractsAndCurrencies.map(({ contract, currency }) =>
