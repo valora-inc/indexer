@@ -1,5 +1,6 @@
 import { ContractKit, StableToken } from '@celo/contractkit'
 import { BaseWrapper } from '@celo/contractkit/lib/wrappers/BaseWrapper'
+import { MCEUR_ADDRESS, MCREAL_ADDRESS, MCUSD_ADDRESS } from '../config'
 import asyncPool from 'tiny-async-pool'
 import { EventLog } from 'web3-core'
 import { database } from '../database/db'
@@ -16,6 +17,10 @@ export enum Contract {
   cUsd = 'cUsd',
   cEur = 'cEur',
   cReal = 'cReal',
+  mCUsd = 'mCUsd',
+  mCEur = 'mCEur',
+  mCReal = 'mCReal',
+  celo = 'celo',
 }
 
 // TODO: Add types for the events of each contract.
@@ -57,6 +62,22 @@ const contracts: { [contract in Contract]: ContractInfo } = {
   },
   [Contract.cReal]: {
     contract: (kit) => kit.contracts.getStableToken(StableToken.cREAL),
+    batchSize: 500,
+  },
+  [Contract.mCUsd]: {
+    contract: (kit) => kit.contracts.getErc20(MCUSD_ADDRESS!),
+    batchSize: 500,
+  },
+  [Contract.mCEur]: {
+    contract: (kit) => kit.contracts.getErc20(MCEUR_ADDRESS!),
+    batchSize: 500,
+  },
+  [Contract.mCReal]: {
+    contract: (kit) => kit.contracts.getErc20(MCREAL_ADDRESS!),
+    batchSize: 500,
+  },
+  [Contract.celo]: {
+    contract: (kit) => kit.contracts.getGoldToken(),
     batchSize: 500,
   },
 }
@@ -106,7 +127,12 @@ export async function indexEvents(
             })
             .transacting(trx)
         })
-        await setLastBlock(key, toBlock).transacting(trx)
+        if (events.length > 0) {
+          await setLastBlock(
+            key,
+            events[events.length - 1].blockNumber,
+          ).transacting(trx)
+        }
       })
     }
   } catch (error) {

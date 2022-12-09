@@ -17,3 +17,7 @@ export const TRANSFERS_POLLING_INTERVAL =
   Number(process.env.TRANSFERS_POLLING_INTERVAL) || 5000
 
 export const WEB3_PROVIDER_URL = process.env.WEB3_PROVIDER_URL || 'UNDEFINED'
+
+export const MCUSD_ADDRESS = process.env.MCUSD_ADDRESS
+export const MCEUR_ADDRESS = process.env.MCEUR_ADDRESS
+export const MCREAL_ADDRESS = process.env.MCREAL_ADDRESS

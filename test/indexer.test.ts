@@ -73,7 +73,7 @@ describe('Indexer', () => {
     ).toBeTruthy()
 
     const key = `${Contract.Accounts}_${Event.AccountWalletAddressSet}`
-    expect(await getLastBlock(key)).toEqual(toBlock)
+    expect(await getLastBlock(key)).toEqual(1234)
   })
 
   it("halts when there's an error storing events", async () => {
