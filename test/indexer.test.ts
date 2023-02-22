@@ -11,6 +11,7 @@ jest.mock('../src/util/utils', () => ({
     web3: {
       eth: {
         getBlockNumber: getLastBlockNumberMock,
+        getBlock: jest.fn().mockReturnValue(12345)
       },
     },
     contracts: {

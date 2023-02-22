@@ -1,7 +1,7 @@
 import { Knex } from 'knex'
 
 export async function up(knex: Knex): Promise<void> {
-  const tableNames: string[] = [
+  const tableNames = [
     'account_wallet_mappings',
     'attestations_completed',
     'escrow',
