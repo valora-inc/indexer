@@ -82,6 +82,17 @@ const contracts: { [contract in Contract]: ContractInfo } = {
   },
 }
 
+async function getBlockTimestamps(events: EventLog[], kit: ContractKit) {
+  const blockNumberToTimestamp: Record<number, number> = {}
+  await Promise.all(
+    events.map(async ({ blockNumber }) => {
+      const block = await kit.web3.eth.getBlock(blockNumber)
+      blockNumberToTimestamp[blockNumber] = Number(block.timestamp)
+    }),
+  )
+  return blockNumberToTimestamp
+}
+
 export async function indexEvents(
   contractKey: Contract,
   contractEvent: Event,
@@ -111,6 +122,7 @@ export async function indexEvents(
           `${key} - Got ${events.length} events between blocks [${fromBlock}, ${toBlock}]`,
         )
       }
+      const blockNumberToTimestamp = await getBlockTimestamps(events, kit)
       fromBlock = toBlock + 1
       // Wrap write to event table and block index in a transaction so that the
       // update is atomic.
@@ -123,6 +135,7 @@ export async function indexEvents(
               logIndex,
               blockNumber,
               blockHash,
+              timestamp: blockNumberToTimestamp[blockNumber],
               ...payloadMapper(event),
             })
             .transacting(trx)
