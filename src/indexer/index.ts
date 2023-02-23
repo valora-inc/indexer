@@ -84,8 +84,10 @@ const contracts: { [contract in Contract]: ContractInfo } = {
 
 async function getBlockTimestamps(events: EventLog[], kit: ContractKit) {
   const blockNumberToTimestamp: Record<number, number> = {}
+  const uniqueBlockNumbers = new Set<number>()
+  events.forEach((event) => uniqueBlockNumbers.add(event.blockNumber))
   await Promise.all(
-    events.map(async ({ blockNumber }) => {
+    Array.from(uniqueBlockNumbers).map(async (blockNumber) => {
       const block = await kit.web3.eth.getBlock(blockNumber)
       blockNumberToTimestamp[blockNumber] = Number(block.timestamp)
     }),
