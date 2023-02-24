@@ -6,9 +6,7 @@ import { getContractKit } from '../src/util/utils'
 
 const getLastBlockNumberMock = jest.fn()
 const getAccountEventsMock = jest.fn()
-
-const timestamp = 10000
-const getBlockMock = jest.fn().mockResolvedValue({timestamp})
+const getBlockMock = jest.fn()
 
 jest.mock('../src/util/utils', () => ({
   getContractKit: jest.fn(() => ({
@@ -52,6 +50,7 @@ describe('Indexer', () => {
     getAccountEventsMock
       .mockImplementationOnce(() => [partialEventLog({ transactionHash: firstTxHash })])
       .mockImplementationOnce(() => [partialEventLog({ transactionHash: secondTxHash })])
+    getBlockMock.mockImplementation((blockNumber) => ({timestamp: blockNumber}))
   }
 
   it('indexes account events', async () => {
@@ -100,7 +99,7 @@ describe('Indexer', () => {
     const kit = await getContractKit()
     const blockNumberToTimestamp = await getBlockTimestamps([partialEventLog({blockNumber: blockNumber1}), partialEventLog({blockNumber: blockNumber2})], kit)
 
-    expect(blockNumberToTimestamp).toEqual({[blockNumber1]: timestamp, [blockNumber2]: timestamp})
+    expect(blockNumberToTimestamp).toEqual({[blockNumber1]: blockNumber1, [blockNumber2]: blockNumber2})
     expect(getBlockMock).toHaveBeenCalledTimes(2)
   })
 
@@ -109,7 +108,7 @@ describe('Indexer', () => {
     const kit = await getContractKit()
     const blockNumberToTimestamp = await getBlockTimestamps([partialEventLog({blockNumber}), partialEventLog({blockNumber})], kit)
 
-    expect(blockNumberToTimestamp).toEqual({[blockNumber]: timestamp})
+    expect(blockNumberToTimestamp).toEqual({[blockNumber]: blockNumber})
     expect(getBlockMock).toHaveBeenCalledTimes(1)
   })
 })
