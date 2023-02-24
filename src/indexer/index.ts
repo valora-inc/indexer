@@ -139,7 +139,7 @@ export async function indexEvents(
               logIndex,
               blockNumber,
               blockHash,
-              timestamp: blockNumberToTimestamp[blockNumber],
+              blockTimestamp: blockNumberToTimestamp[blockNumber],
               ...payloadMapper(event),
             })
             .transacting(trx)
