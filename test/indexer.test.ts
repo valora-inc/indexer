@@ -1,17 +1,21 @@
-import { Contract, Event, indexEvents } from '../src/indexer'
+import { Contract, Event, indexEvents, getBlockTimestamps } from '../src/indexer'
 import { database, initDatabase } from '../src/database/db'
 import { partialEventLog } from '../src/util/testing'
 import { getLastBlock } from '../src/indexer/blocks'
+import { getContractKit } from '../src/util/utils'
 
 const getLastBlockNumberMock = jest.fn()
 const getAccountEventsMock = jest.fn()
+
+const timestamp = 10000
+const getBlockMock = jest.fn().mockResolvedValue({timestamp})
 
 jest.mock('../src/util/utils', () => ({
   getContractKit: jest.fn(() => ({
     web3: {
       eth: {
         getBlockNumber: getLastBlockNumberMock,
-        getBlock: jest.fn().mockReturnValue(12345)
+        getBlock: getBlockMock
       },
     },
     contracts: {
@@ -88,5 +92,24 @@ describe('Indexer', () => {
 
     const key = `${Contract.Accounts}_${Event.AccountWalletAddressSet}`
     expect(await getLastBlock(key)).toEqual(0)
+  })
+
+  it('getBlockTimestamps returns a mapping from blockNumber to timestamp', async () => {
+    const blockNumber1 = 1234
+    const blockNumber2 = 1235
+    const kit = await getContractKit()
+    const blockNumberToTimestamp = await getBlockTimestamps([partialEventLog({blockNumber: blockNumber1}), partialEventLog({blockNumber: blockNumber2})], kit)
+
+    expect(blockNumberToTimestamp).toEqual({[blockNumber1]: timestamp, [blockNumber2]: timestamp})
+    expect(getBlockMock).toHaveBeenCalledTimes(2)
+  })
+
+  it('getBlockTimestamps calls getBlock once if multiple events are in one block', async () => {
+    const blockNumber = 1234
+    const kit = await getContractKit()
+    const blockNumberToTimestamp = await getBlockTimestamps([partialEventLog({blockNumber}), partialEventLog({blockNumber})], kit)
+
+    expect(blockNumberToTimestamp).toEqual({[blockNumber]: timestamp})
+    expect(getBlockMock).toHaveBeenCalledTimes(1)
   })
 })
