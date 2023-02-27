@@ -1,16 +1,19 @@
-import { Contract, Event, indexEvents } from '../src/indexer'
+import { Contract, Event, indexEvents, getBlockTimestamps } from '../src/indexer'
 import { database, initDatabase } from '../src/database/db'
 import { partialEventLog } from '../src/util/testing'
 import { getLastBlock } from '../src/indexer/blocks'
+import { getContractKit } from '../src/util/utils'
 
 const getLastBlockNumberMock = jest.fn()
 const getAccountEventsMock = jest.fn()
+const getBlockMock = jest.fn()
 
 jest.mock('../src/util/utils', () => ({
   getContractKit: jest.fn(() => ({
     web3: {
       eth: {
         getBlockNumber: getLastBlockNumberMock,
+        getBlock: getBlockMock
       },
     },
     contracts: {
@@ -47,6 +50,7 @@ describe('Indexer', () => {
     getAccountEventsMock
       .mockImplementationOnce(() => [partialEventLog({ transactionHash: firstTxHash })])
       .mockImplementationOnce(() => [partialEventLog({ transactionHash: secondTxHash })])
+    getBlockMock.mockImplementation((blockNumber) => ({timestamp: blockNumber}))
   }
 
   it('indexes account events', async () => {
@@ -87,5 +91,24 @@ describe('Indexer', () => {
 
     const key = `${Contract.Accounts}_${Event.AccountWalletAddressSet}`
     expect(await getLastBlock(key)).toEqual(0)
+  })
+
+  it('getBlockTimestamps returns a mapping from blockNumber to timestamp', async () => {
+    const blockNumber1 = 1234
+    const blockNumber2 = 1235
+    const kit = await getContractKit()
+    const blockNumberToTimestamp = await getBlockTimestamps([partialEventLog({blockNumber: blockNumber1}), partialEventLog({blockNumber: blockNumber2})], kit)
+
+    expect(blockNumberToTimestamp).toEqual({[blockNumber1]: blockNumber1, [blockNumber2]: blockNumber2})
+    expect(getBlockMock).toHaveBeenCalledTimes(2)
+  })
+
+  it('getBlockTimestamps calls getBlock once if multiple events are in one block', async () => {
+    const blockNumber = 1234
+    const kit = await getContractKit()
+    const blockNumberToTimestamp = await getBlockTimestamps([partialEventLog({blockNumber}), partialEventLog({blockNumber})], kit)
+
+    expect(blockNumberToTimestamp).toEqual({[blockNumber]: blockNumber})
+    expect(getBlockMock).toHaveBeenCalledTimes(1)
   })
 })
