@@ -22,7 +22,7 @@ export const pollers = [
 ].map((poller) =>
   AsyncPolling(async (end) => {
     try {
-      await sleepRandom(JITTER) // adds jitter. this helps us avoid hitting rate limits
+      await sleepRandom(JITTER) // helps avoid rate limits by spreading out requests to RPC provider
       await poller.fx()
     } catch (e) {
       console.error('Polling failed', e)
