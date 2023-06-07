@@ -5,13 +5,11 @@ import {
   ATTESTATIONS_POLLING_INTERVAL,
   INVITES_POLLING_INTERVAL,
   TRANSFERS_POLLING_INTERVAL,
-  JITTER,
 } from './config'
 import { handleAccountMappings } from './indexer/accounts'
 import { handleAttestations } from './indexer/attestations'
 import { handleInvites } from './indexer/invites'
 import { handleTransfers } from './indexer/transfers'
-import { sleepRandom } from './util/sleep'
 import { handleBlockMetadata } from './indexer/block-metadata'
 
 export const pollers = [
@@ -23,7 +21,6 @@ export const pollers = [
 ].map((poller) =>
   AsyncPolling(async (end) => {
     try {
-      await sleepRandom(JITTER) // helps avoid rate limits by spreading out requests to RPC provider
       await poller.fx()
     } catch (e) {
       console.error('Polling failed', e)
