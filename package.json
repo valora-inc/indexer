@@ -27,7 +27,6 @@
     "async-polling": "^0.2.1",
     "bignumber.js": "^9.0.0",
     "dotenv": "^8.2.0",
-    "ethers": "^6.4.2",
     "express": "^4.17.1",
     "knex": "~0.95.5",
     "node-fetch": "^2.6.1",
