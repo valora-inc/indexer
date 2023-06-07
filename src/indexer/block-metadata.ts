@@ -22,7 +22,7 @@ export async function handleBlockMetadata() {
       )
       await database(TABLE_NAME)
         .insert({
-          fromBlock: blockNumber,
+          blockNumber,
           blockTimestamp,
         })
         .onConflict('blockNumber')
