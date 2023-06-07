@@ -38,17 +38,19 @@ export async function handleTransfers() {
       currency: 'CELO',
     },
   ]
-  for (const { contract, currency } of contractsAndCurrencies) {
-    await indexEvents(
-      contract,
-      Event.Transfer,
-      TRANSFERS_TABLE_NAME,
-      ({ returnValues: { from, to, value } }) => ({
-        from,
-        to,
-        value,
-        currency,
-      }),
-    )
-  }
+  await Promise.all(
+    contractsAndCurrencies.map(({ contract, currency }) =>
+      indexEvents(
+        contract,
+        Event.Transfer,
+        TRANSFERS_TABLE_NAME,
+        ({ returnValues: { from, to, value } }) => ({
+          from,
+          to,
+          value,
+          currency,
+        }),
+      ),
+    ),
+  )
 }
