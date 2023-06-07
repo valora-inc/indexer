@@ -16,7 +16,7 @@ export async function handleBlockMetadata() {
     console.info(
       `Indexing block metadata between blocks [${blockNumber}, ${currentBlockNumber}]`,
     )
-    while (blockNumber < currentBlockNumber) {
+    while (blockNumber <= currentBlockNumber) {
       const blockTimestamp = Number(
         (await contractKit.web3.eth.getBlock(blockNumber)).timestamp,
       )
