@@ -30,7 +30,6 @@
     "ethers": "^6.4.2",
     "express": "^4.17.1",
     "knex": "~0.95.5",
-    "lru-cache": "^9.1.2",
     "node-fetch": "^2.6.1",
     "pg": "~8.6.0",
     "tiny-async-pool": "~1.2.0",

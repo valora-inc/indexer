@@ -1,7 +1,6 @@
 import { ContractKit, StableToken } from '@celo/contractkit'
 import { BaseWrapper } from '@celo/contractkit/lib/wrappers/BaseWrapper'
 import {
-  BLOCK_TIMESTAMP_CACHE_SIZE,
   MCEUR_ADDRESS,
   MCREAL_ADDRESS,
   MCUSD_ADDRESS,
@@ -11,7 +10,6 @@ import { EventLog } from 'web3-core'
 import { database } from '../database/db'
 import { getContractKit } from '../util/utils'
 import { getLastBlock, setLastBlock } from './blocks'
-import {LRUCache} from "lru-cache";
 
 const TAG = 'Indexer'
 const CONCURRENT_EVENTS_HANDLED = 5
@@ -88,28 +86,6 @@ const contracts: { [contract in Contract]: ContractInfo } = {
   },
 }
 
-const blockTimestampCache = new LRUCache<number, number>({max: BLOCK_TIMESTAMP_CACHE_SIZE})
-
-// Exported to allow for testing
-export async function getBlockTimestamps(events: EventLog[], kit: ContractKit) {
-  // fixme I think this is where the rate limiting is taking place
-  const blockNumberToTimestamp: Record<number, number> = {}
-  const uniqueBlockNumbers = new Set(
-    events.map(({ blockNumber }) => blockNumber),
-  )
-  await asyncPool(50, Array.from(uniqueBlockNumbers), async (blockNumber) => {
-    const cachedTimestamp = blockTimestampCache.get(blockNumber)
-    if (cachedTimestamp) {
-      blockNumberToTimestamp[blockNumber] = cachedTimestamp
-    } else {
-      const { timestamp } = await kit.web3.eth.getBlock(blockNumber)
-      blockNumberToTimestamp[blockNumber] = Number(timestamp)
-      blockTimestampCache.set(blockNumber, blockNumberToTimestamp[blockNumber])
-    }
-  })
-  return blockNumberToTimestamp
-}
-
 export async function indexEvents(
   contractKey: Contract,
   contractEvent: Event,
@@ -139,7 +115,6 @@ export async function indexEvents(
           `${key} - Got ${events.length} events between blocks [${fromBlock}, ${toBlock}]`,
         )
       }
-      const blockNumberToTimestamp = await getBlockTimestamps(events, kit)
       fromBlock = toBlock + 1
       // Wrap write to event table and block index in a transaction so that the
       // update is atomic.
@@ -152,7 +127,6 @@ export async function indexEvents(
               logIndex,
               blockNumber,
               blockHash,
-              blockTimestamp: blockNumberToTimestamp[blockNumber],
               ...payloadMapper(event),
             })
             .transacting(trx)
