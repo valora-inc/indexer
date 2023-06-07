@@ -15,6 +15,8 @@ export const ATTESTATIONS_POLLING_INTERVAL =
   Number(process.env.ATTESTATIONS_POLLING_INTERVAL) || 60000
 export const TRANSFERS_POLLING_INTERVAL =
   Number(process.env.TRANSFERS_POLLING_INTERVAL) || 5000
+export const JITTER = Number(process.env.JITTER) || 1000
+export const BLOCK_METADATA_POLLING_INTERVAL = Number(process.env.BLOCK_METADATA_POLLING_INTERVAL) || 5000
 
 export const WEB3_PROVIDER_URL = process.env.WEB3_PROVIDER_URL || 'UNDEFINED'
 
