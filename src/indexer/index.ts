@@ -1,10 +1,6 @@
 import { ContractKit, StableToken } from '@celo/contractkit'
 import { BaseWrapper } from '@celo/contractkit/lib/wrappers/BaseWrapper'
-import {
-  MCEUR_ADDRESS,
-  MCREAL_ADDRESS,
-  MCUSD_ADDRESS,
-} from '../config'
+import { MCEUR_ADDRESS, MCREAL_ADDRESS, MCUSD_ADDRESS } from '../config'
 import asyncPool from 'tiny-async-pool'
 import { EventLog } from 'web3-core'
 import { database } from '../database/db'
