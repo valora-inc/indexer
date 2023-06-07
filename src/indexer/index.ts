@@ -97,8 +97,7 @@ export async function getBlockTimestamps(events: EventLog[], kit: ContractKit) {
   const uniqueBlockNumbers = new Set(
     events.map(({ blockNumber }) => blockNumber),
   )
-  for (const blockNumber of uniqueBlockNumbers) {
-    // fixme this is still too slow. may need to go back to Promise.all (and add jitter?)
+  await asyncPool(50, Array.from(uniqueBlockNumbers), async (blockNumber) => {
     const cachedTimestamp = blockTimestampCache.get(blockNumber)
     if (cachedTimestamp) {
       blockNumberToTimestamp[blockNumber] = cachedTimestamp
@@ -107,7 +106,7 @@ export async function getBlockTimestamps(events: EventLog[], kit: ContractKit) {
       blockNumberToTimestamp[blockNumber] = Number(timestamp)
       blockTimestampCache.set(blockNumber, blockNumberToTimestamp[blockNumber])
     }
-  }
+  })
   return blockNumberToTimestamp
 }
 

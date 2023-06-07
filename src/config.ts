@@ -22,4 +22,4 @@ export const MCUSD_ADDRESS = process.env.MCUSD_ADDRESS
 export const MCEUR_ADDRESS = process.env.MCEUR_ADDRESS
 export const MCREAL_ADDRESS = process.env.MCREAL_ADDRESS
 
-export const BLOCK_TIMESTAMP_CACHE_SIZE = Number(process.env.BLOCK_TIMESTAMP_CACHE_SIZE) || 1000
+export const BLOCK_TIMESTAMP_CACHE_SIZE = Number(process.env.BLOCK_TIMESTAMP_CACHE_SIZE) || 5000
