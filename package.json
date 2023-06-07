@@ -28,6 +28,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "knex": "~0.95.5",
+    "lru-cache": "^9.1.2",
     "node-fetch": "^2.6.1",
     "pg": "~8.6.0",
     "tiny-async-pool": "~1.2.0",
@@ -61,7 +62,7 @@
     "@celo/flake-tracker": "0.0.1-dev"
   },
   "engines": {
-    "node": "12"
+    "node": "14"
   },
   "resolutions": {
     "web3-eth-abi/**/@ethersproject/abi": "5.0.4",

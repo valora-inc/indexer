@@ -1,11 +1,17 @@
 import { ContractKit, StableToken } from '@celo/contractkit'
 import { BaseWrapper } from '@celo/contractkit/lib/wrappers/BaseWrapper'
-import { MCEUR_ADDRESS, MCREAL_ADDRESS, MCUSD_ADDRESS } from '../config'
+import {
+  BLOCK_TIMESTAMP_CACHE_SIZE,
+  MCEUR_ADDRESS,
+  MCREAL_ADDRESS,
+  MCUSD_ADDRESS,
+} from '../config'
 import asyncPool from 'tiny-async-pool'
 import { EventLog } from 'web3-core'
 import { database } from '../database/db'
 import { getContractKit } from '../util/utils'
 import { getLastBlock, setLastBlock } from './blocks'
+import {LRUCache} from "lru-cache";
 
 const TAG = 'Indexer'
 const CONCURRENT_EVENTS_HANDLED = 5
@@ -82,18 +88,26 @@ const contracts: { [contract in Contract]: ContractInfo } = {
   },
 }
 
+const blockTimestampCache = new LRUCache<number, number>({max: BLOCK_TIMESTAMP_CACHE_SIZE})
+
 // Exported to allow for testing
 export async function getBlockTimestamps(events: EventLog[], kit: ContractKit) {
+  // fixme I think this is where the rate limiting is taking place
   const blockNumberToTimestamp: Record<number, number> = {}
   const uniqueBlockNumbers = new Set(
     events.map(({ blockNumber }) => blockNumber),
   )
-  await Promise.all(
-    Array.from(uniqueBlockNumbers).map(async (blockNumber) => {
-      const block = await kit.web3.eth.getBlock(blockNumber)
-      blockNumberToTimestamp[blockNumber] = Number(block.timestamp)
-    }),
-  )
+  for (const blockNumber of uniqueBlockNumbers) {
+    // fixme this is still too slow. may need to go back to Promise.all (and add jitter?)
+    const cachedTimestamp = blockTimestampCache.get(blockNumber)
+    if (cachedTimestamp) {
+      blockNumberToTimestamp[blockNumber] = cachedTimestamp
+    } else {
+      const { timestamp } = await kit.web3.eth.getBlock(blockNumber)
+      blockNumberToTimestamp[blockNumber] = Number(timestamp)
+      blockTimestampCache.set(blockNumber, blockNumberToTimestamp[blockNumber])
+    }
+  }
   return blockNumberToTimestamp
 }
 
