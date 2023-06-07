@@ -5,10 +5,11 @@ import {
   INVITES_POLLING_INTERVAL,
   TRANSFERS_POLLING_INTERVAL,
 } from './config'
-import { handleAccountMappings } from './indexer/accounts'
-import { handleAttestations } from './indexer/attestations'
-import { handleInvites } from './indexer/invites'
-import { handleTransfers } from './indexer/transfers'
+// import {handleAccountMappings} from './indexer/accounts'
+// import {handleAttestations} from './indexer/attestations'
+// import {handleInvites} from './indexer/invites'
+import {handleTransfers} from './indexer/transfers'
+import {sleepRandom} from "./util/sleep"
 
 export const pollers = [
   { fx: handleInvites, interval: INVITES_POLLING_INTERVAL },
@@ -18,6 +19,7 @@ export const pollers = [
 ].map((poller) =>
   AsyncPolling(async (end) => {
     try {
+      await sleepRandom(poller.interval) // adds jitter. this helps us avoid hitting rate limits
       await poller.fx()
     } catch (e) {
       console.error('Polling failed', e)
