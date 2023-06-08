@@ -1,14 +1,10 @@
 import express from 'express'
 
-import { ENVIRONMENT, PORT, VERSION, WEB3_PROVIDER_URL } from './config'
+import { ENVIRONMENT, PORT, VERSION } from './config'
 import { initDatabase } from './database/db'
 import { pollers } from './polling'
 
 export default async function initApp(): Promise<express.Application> {
-  if (!WEB3_PROVIDER_URL) {
-    throw new Error('You must set the WEB3_PROVIDER_URL environment variable.')
-  }
-
   console.info(
     'Service starting with environment, version:',
     ENVIRONMENT,
