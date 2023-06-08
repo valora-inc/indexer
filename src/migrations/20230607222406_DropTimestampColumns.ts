@@ -7,24 +7,18 @@ const TABLE_NAMES = [
   'transfers',
 ]
 
-export async function down(knex: Knex): Promise<void> {
-  await Promise.all(
-    TABLE_NAMES.map(
-      async (tableName) =>
-        await knex.schema.alterTable(tableName, (table) =>
-          table.bigInteger('blockTimestamp'),
-        ),
-    ),
-  )
+export async function up(knex: Knex): Promise<void> {
+  for (const tableName of TABLE_NAMES) {
+    await knex.schema.alterTable(tableName, (table) =>
+      table.dropColumn('blockTimestamp'),
+    )
+  }
 }
 
-export async function up(knex: Knex): Promise<void> {
-  await Promise.all(
-    TABLE_NAMES.map(
-      async (tableName) =>
-        await knex.schema.alterTable(tableName, (table) =>
-          table.dropColumn('blockTimestamp'),
-        ),
-    ),
-  )
+export async function down(knex: Knex): Promise<void> {
+  for (const tableName of TABLE_NAMES) {
+    await knex.schema.alterTable(tableName, (table) =>
+      table.bigInteger('blockTimestamp'),
+    )
+  }
 }
