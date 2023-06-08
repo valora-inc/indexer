@@ -21,8 +21,6 @@ export const BLOCK_METADATA_POLLING_INTERVAL =
 export const BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER =
   Number(process.env.BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER) || 19546425 // arbitrarily chosen from before rate limiting outage
 
-export const WEB3_PROVIDER_URL = process.env.WEB3_PROVIDER_URL || 'UNDEFINED'
-
 export const MCUSD_ADDRESS = process.env.MCUSD_ADDRESS
 export const MCEUR_ADDRESS = process.env.MCEUR_ADDRESS
 export const MCREAL_ADDRESS = process.env.MCREAL_ADDRESS
