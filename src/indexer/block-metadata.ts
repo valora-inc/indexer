@@ -9,10 +9,12 @@ export async function handleBlockMetadata() {
     const contractKit = await getContractKit()
 
     const currentBlockNumber = await contractKit.web3.eth.getBlockNumber()
-    const lastBlockNumberIndexed =
-      (await database(TABLE_NAME).max('blockNumber').first())?.blockNumber ??
-      BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER
-    let blockNumber = lastBlockNumberIndexed + 1
+    const lastBlockNumberIndexed = (
+      await database(TABLE_NAME).max('blockNumber').first()
+    )?.max
+    let blockNumber = lastBlockNumberIndexed
+      ? lastBlockNumberIndexed + 1
+      : BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER
     console.info(
       `Indexing block metadata between blocks [${blockNumber}, ${currentBlockNumber}]`,
     )
