@@ -2,7 +2,9 @@ import { database } from '../database/db'
 import { getContractKit } from '../util/utils'
 import { BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER } from '../config'
 
-const TABLE_NAME = 'block_metadata'
+const BLOCK_METADATA_TABLE_NAME = 'block_metadata'
+const BLOCK_NUMBER_COL_NAME = 'blockNumber'
+const BLOCK_TIMESTAMP_COL_NAME = 'blockTimestamp'
 
 export async function handleBlockMetadata() {
   try {
@@ -10,8 +12,10 @@ export async function handleBlockMetadata() {
 
     const currentBlockNumber = await contractKit.web3.eth.getBlockNumber()
     const lastBlockNumberIndexed = (
-      await database(TABLE_NAME).max('blockNumber').first()
-    )?.max
+      await database(BLOCK_METADATA_TABLE_NAME)
+        .max({ [BLOCK_NUMBER_COL_NAME]: BLOCK_NUMBER_COL_NAME })
+        .first()
+    )?.[BLOCK_NUMBER_COL_NAME]
     let blockNumber = lastBlockNumberIndexed
       ? lastBlockNumberIndexed + 1
       : BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER
@@ -22,12 +26,12 @@ export async function handleBlockMetadata() {
       const blockTimestamp = Number(
         (await contractKit.web3.eth.getBlock(blockNumber)).timestamp,
       )
-      await database(TABLE_NAME)
+      await database(BLOCK_METADATA_TABLE_NAME)
         .insert({
-          blockNumber,
-          blockTimestamp,
+          [BLOCK_NUMBER_COL_NAME]: blockNumber,
+          [BLOCK_TIMESTAMP_COL_NAME]: blockTimestamp,
         })
-        .onConflict('blockNumber')
+        .onConflict(BLOCK_NUMBER_COL_NAME)
         .ignore() // do nothing if row already exists with same blockNumber
       blockNumber++
     }

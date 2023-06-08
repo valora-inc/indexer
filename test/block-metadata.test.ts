@@ -3,7 +3,6 @@ import { getContractKit } from '../src/util/utils'
 import { ContractKit } from '@celo/contractkit'
 import { database, initDatabase } from '../src/database/db'
 import { handleBlockMetadata } from '../src/indexer/block-metadata'
-import { BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER } from '../src/config'
 
 jest.mock('../src/util/utils')
 jest.mock('../src/config', () => ({
@@ -33,7 +32,7 @@ describe('block metadata', () => {
     return database.destroy()
   })
   it('saves block info when no rows exist in block_metadata', async () => {
-    const mockCurrentBlockNumber = BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER + 1
+    const mockCurrentBlockNumber = 101
     mockGetBlockNumber.mockResolvedValue(mockCurrentBlockNumber)
 
     await handleBlockMetadata()
@@ -43,26 +42,28 @@ describe('block metadata', () => {
 
     expect(rows).toEqual([
       {
-        blockNumber: BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER,
-        blockTimestamp: (
-          BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER * 10
-        ).toString(),
+        blockNumber: 100,
+        blockTimestamp: 1000,
       },
       {
-        blockNumber: BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER + 1,
-        blockTimestamp: (
-          (BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER + 1) *
-          10
-        ).toString(),
+        blockNumber: 101,
+        blockTimestamp: 1010,
       },
     ])
   })
   it('saves only new block info when rows exist in block_metadata', async () => {
-    const mockLastBlockIndexed = BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER + 5
+    const mockLastBlockIndexed = 105
     await database('block_metadata').insert({
       blockNumber: mockLastBlockIndexed,
       blockTimestamp: mockLastBlockIndexed * 10,
     })
+    expect(
+      (
+        await database('block_metadata')
+          .max({ blockNumber: 'blockNumber' })
+          .first()
+      )?.blockNumber,
+    ).toEqual(mockLastBlockIndexed)
     const mockCurrentBlockNumber = mockLastBlockIndexed + 2
     mockGetBlockNumber.mockResolvedValue(mockCurrentBlockNumber)
 
@@ -74,20 +75,20 @@ describe('block metadata', () => {
     expect(rows).toEqual([
       {
         blockNumber: mockLastBlockIndexed,
-        blockTimestamp: (mockLastBlockIndexed * 10).toString(),
+        blockTimestamp: mockLastBlockIndexed * 10,
       },
       {
         blockNumber: mockLastBlockIndexed + 1,
-        blockTimestamp: ((mockLastBlockIndexed + 1) * 10).toString(),
+        blockTimestamp: (mockLastBlockIndexed + 1) * 10,
       },
       {
         blockNumber: mockLastBlockIndexed + 2,
-        blockTimestamp: ((mockLastBlockIndexed + 2) * 10).toString(),
+        blockTimestamp: (mockLastBlockIndexed + 2) * 10,
       },
     ])
   })
   it('does nothing when no new blocks to index', async () => {
-    const mockLastBlockIndexed = BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER + 5
+    const mockLastBlockIndexed = 105
     await database('block_metadata').insert({
       blockNumber: mockLastBlockIndexed,
       blockTimestamp: mockLastBlockIndexed * 10,
@@ -102,7 +103,7 @@ describe('block metadata', () => {
     expect(rows).toEqual([
       {
         blockNumber: mockLastBlockIndexed,
-        blockTimestamp: (mockLastBlockIndexed * 10).toString(),
+        blockTimestamp: mockLastBlockIndexed * 10,
       },
     ])
   })
