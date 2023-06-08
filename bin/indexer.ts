@@ -3,8 +3,8 @@ import initApp from '../src'
 import loadSecretEnvironment from '../src/secret-manager'
 
 async function main() {
-  if (process.env.SECRET_NAME) {
-    await loadSecretEnvironment(process.env.SECRET_NAME)
+  if (process.env.DB_SECRET_NAME) {
+    await loadSecretEnvironment(process.env.DB_SECRET_NAME)
   }
 
   const app = await initApp()
