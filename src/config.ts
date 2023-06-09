@@ -17,6 +17,10 @@ export const TRANSFERS_POLLING_INTERVAL =
   Number(process.env.TRANSFERS_POLLING_INTERVAL) || 5000
 
 export const WEB3_PROVIDER_URL = process.env.WEB3_PROVIDER_URL || 'UNDEFINED'
+export const BLOCK_METADATA_POLLING_INTERVAL =
+  Number(process.env.BLOCK_METADATA_POLLING_INTERVAL) || 5000
+export const BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER =
+  Number(process.env.BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER) || 19546425 // a block number from before rate limiting outage. would probably only want to override for testing.
 
 export const MCUSD_ADDRESS = process.env.MCUSD_ADDRESS
 export const MCEUR_ADDRESS = process.env.MCEUR_ADDRESS

@@ -1,8 +1,7 @@
-import { Contract, Event, indexEvents, getBlockTimestamps } from '../src/indexer'
+import { Contract, Event, indexEvents } from '../src/indexer'
 import { database, initDatabase } from '../src/database/db'
 import { partialEventLog } from '../src/util/testing'
 import { getLastBlock } from '../src/indexer/blocks'
-import { getContractKit } from '../src/util/utils'
 
 const getLastBlockNumberMock = jest.fn()
 const getAccountEventsMock = jest.fn()
@@ -13,7 +12,7 @@ jest.mock('../src/util/utils', () => ({
     web3: {
       eth: {
         getBlockNumber: getLastBlockNumberMock,
-        getBlock: getBlockMock
+        getBlock: getBlockMock,
       },
     },
     contracts: {
@@ -48,17 +47,28 @@ describe('Indexer', () => {
   function prepareMocks() {
     getLastBlockNumberMock.mockImplementation(() => Promise.resolve(toBlock))
     getAccountEventsMock
-      .mockImplementationOnce(() => [partialEventLog({ transactionHash: firstTxHash })])
-      .mockImplementationOnce(() => [partialEventLog({ transactionHash: secondTxHash })])
-    getBlockMock.mockImplementation((blockNumber) => ({timestamp: blockNumber}))
+      .mockImplementationOnce(() => [
+        partialEventLog({ transactionHash: firstTxHash }),
+      ])
+      .mockImplementationOnce(() => [
+        partialEventLog({ transactionHash: secondTxHash }),
+      ])
+    getBlockMock.mockImplementation((blockNumber) => ({
+      timestamp: blockNumber,
+    }))
   }
 
   it('indexes account events', async () => {
     prepareMocks()
 
-    await indexEvents(Contract.Accounts, Event.AccountWalletAddressSet, tableName, (event) => ({
-      transactionHash: event.transactionHash,
-    }))
+    await indexEvents(
+      Contract.Accounts,
+      Event.AccountWalletAddressSet,
+      tableName,
+      (event) => ({
+        transactionHash: event.transactionHash,
+      }),
+    )
 
     expect(await database(tableName)).toHaveLength(2)
     expect(
@@ -66,14 +76,14 @@ describe('Indexer', () => {
         .where({
           transactionHash: firstTxHash,
         })
-        .first()
+        .first(),
     ).toBeTruthy()
     expect(
       await database(tableName)
         .where({
           transactionHash: secondTxHash,
         })
-        .first()
+        .first(),
     ).toBeTruthy()
 
     const key = `${Contract.Accounts}_${Event.AccountWalletAddressSet}`
@@ -83,32 +93,18 @@ describe('Indexer', () => {
   it("halts when there's an error storing events", async () => {
     prepareMocks()
 
-    await indexEvents(Contract.Accounts, Event.AccountWalletAddressSet, tableName, () => {
-      throw Error('Test error')
-    })
+    await indexEvents(
+      Contract.Accounts,
+      Event.AccountWalletAddressSet,
+      tableName,
+      () => {
+        throw Error('Test error')
+      },
+    )
 
     expect(await database(tableName)).toHaveLength(0)
 
     const key = `${Contract.Accounts}_${Event.AccountWalletAddressSet}`
     expect(await getLastBlock(key)).toEqual(0)
-  })
-
-  it('getBlockTimestamps returns a mapping from blockNumber to timestamp', async () => {
-    const blockNumber1 = 1234
-    const blockNumber2 = 1235
-    const kit = await getContractKit()
-    const blockNumberToTimestamp = await getBlockTimestamps([partialEventLog({blockNumber: blockNumber1}), partialEventLog({blockNumber: blockNumber2})], kit)
-
-    expect(blockNumberToTimestamp).toEqual({[blockNumber1]: blockNumber1, [blockNumber2]: blockNumber2})
-    expect(getBlockMock).toHaveBeenCalledTimes(2)
-  })
-
-  it('getBlockTimestamps calls getBlock once if multiple events are in one block', async () => {
-    const blockNumber = 1234
-    const kit = await getContractKit()
-    const blockNumberToTimestamp = await getBlockTimestamps([partialEventLog({blockNumber}), partialEventLog({blockNumber})], kit)
-
-    expect(blockNumberToTimestamp).toEqual({[blockNumber]: blockNumber})
-    expect(getBlockMock).toHaveBeenCalledTimes(1)
   })
 })

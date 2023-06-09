@@ -1,5 +1,6 @@
 import AsyncPolling from 'async-polling'
 import {
+  BLOCK_METADATA_POLLING_INTERVAL,
   ACCOUNTS_POLLING_INTERVAL,
   ATTESTATIONS_POLLING_INTERVAL,
   INVITES_POLLING_INTERVAL,
@@ -9,11 +10,13 @@ import { handleAccountMappings } from './indexer/accounts'
 import { handleAttestations } from './indexer/attestations'
 import { handleInvites } from './indexer/invites'
 import { handleTransfers } from './indexer/transfers'
+import { handleBlockMetadata } from './indexer/block-metadata'
 
 export const pollers = [
   { fx: handleInvites, interval: INVITES_POLLING_INTERVAL },
   { fx: handleAccountMappings, interval: ACCOUNTS_POLLING_INTERVAL },
   { fx: handleAttestations, interval: ATTESTATIONS_POLLING_INTERVAL },
+  { fx: handleBlockMetadata, interval: BLOCK_METADATA_POLLING_INTERVAL },
   { fx: handleTransfers, interval: TRANSFERS_POLLING_INTERVAL },
 ].map((poller) =>
   AsyncPolling(async (end) => {

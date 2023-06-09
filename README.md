@@ -25,6 +25,17 @@ Start the indexer:
 yarn start:local
 ```
 
+## Adding a database migration
+
+When you make changes to the database schema, you'll need to create a knex migration
+```shell
+yarn add-migration MyNewMigration
+```
+To test your migration locally:
+```shell
+yarn build
+knex migrate:latest --client sqlite --migrations-directory ./dist/src/migrations --connection ':memory:'
+```
 ## Running on Kubernetes
 
 You can use the example [kubernetes.yaml](kubernetes.yaml) directly:

@@ -3,6 +3,7 @@ import Web3 from 'web3'
 import { WEB3_PROVIDER_URL } from '../config'
 
 let contractKit: ContractKit
+
 export async function getContractKit(): Promise<ContractKit> {
   if (contractKit && (await contractKit.connection.isListening())) {
     // Already connected

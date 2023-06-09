@@ -6,6 +6,7 @@
   "author": "Valora Inc",
   "license": "Apache-2.0",
   "scripts": {
+    "add-migration": "knex migrate:make -x ts --migrations-directory src/migrations",
     "build": "tsc",
     "gcp-build": "npm run build",
     "test": "cp config/config.test.env .env; DB_TYPE=sqlite jest --coverage && prettier --check \"./{src,bin/test}/**/*.ts\"",
