@@ -107,4 +107,46 @@ describe('block metadata', () => {
       },
     ])
   })
+  it('when an error occurs indexing some block, avoids skipping that block on next run', async () => {
+    const mockCurrentBlockNumber = 102
+    mockGetBlockNumber.mockResolvedValue(mockCurrentBlockNumber)
+    let threwError = false
+    mockGetBlock.mockImplementation((blockNumber) => {
+      if (blockNumber === 101 && !threwError) {
+        threwError = true
+        throw new Error('mock error')
+      }
+      return { timestamp: blockNumber * 10 }
+    })
+    await handleBlockMetadata()
+    const rowsAfterFirstRun = await database('block_metadata')
+      .select('blockNumber', 'blockTimestamp')
+      .orderBy('blockNumber') // ascending by default
+
+    expect(rowsAfterFirstRun).toEqual([
+      {
+        blockNumber: 100,
+        blockTimestamp: 1000,
+      },
+    ])
+    await handleBlockMetadata()
+    const rowsAfterSecondRun = await database('block_metadata')
+      .select('blockNumber', 'blockTimestamp')
+      .orderBy('blockNumber') // ascending by default
+
+    expect(rowsAfterSecondRun).toEqual([
+      {
+        blockNumber: 100,
+        blockTimestamp: 1000,
+      },
+      {
+        blockNumber: 101,
+        blockTimestamp: 1010,
+      },
+      {
+        blockNumber: 102,
+        blockTimestamp: 1020,
+      },
+    ])
+  })
 })
