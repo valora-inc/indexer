@@ -1,4 +1,4 @@
-runtime: nodejs12
+runtime: nodejs18
 service: indexer
 instance_class: B4
 manual_scaling:
