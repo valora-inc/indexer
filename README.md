@@ -36,10 +36,3 @@ To test your migration locally:
 yarn build
 knex migrate:latest --client sqlite --migrations-directory ./dist/src/migrations --connection ':memory:'
 ```
-## Running on Kubernetes
-
-You can use the example [kubernetes.yaml](kubernetes.yaml) directly:
-
-```
-kubectl apply -f https://raw.githubusercontent.com/valora-inc/indexer/main/kubernetes.yaml
-```

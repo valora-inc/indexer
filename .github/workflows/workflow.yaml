@@ -62,24 +62,6 @@ jobs:
       - run: yarn
       - run: yarn build
       - run: yarn e2e
-  publish-image:
-    name: Publish Docker image
-    if: github.ref == 'refs/heads/main'
-    needs:
-      - unit
-      - lint
-      - end-to-end
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: docker build -t gcr.io/valora-inc/indexer:${{ github.sha }} .
-      - uses: google-github-actions/setup-gcloud@v0
-        with:
-          service_account_key: ${{ secrets.VALORA_INC_REGISTRY_SERVICE_ACCOUNT_KEY }}
-          export_default_credentials: true
-      - run: |
-          gcloud auth configure-docker
-          docker push gcr.io/valora-inc/indexer:${{ github.sha }}
   deploy-alfajores:
     name: Deploy alfajores
     if: github.ref == 'refs/heads/main'
