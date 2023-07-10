@@ -39,6 +39,8 @@ interface ContractInfo {
   batchSize: number
 }
 
+export const ERC20_TOKEN_BATCH_SIZE = 10_000
+
 const contracts: { [contract in Contract]: ContractInfo } = {
   [Contract.Accounts]: {
     contract: (kit) => kit.contracts.getAccounts(),
@@ -54,31 +56,31 @@ const contracts: { [contract in Contract]: ContractInfo } = {
   },
   [Contract.cUsd]: {
     contract: (kit) => kit.contracts.getStableToken(StableToken.cUSD),
-    batchSize: 500,
+    batchSize: ERC20_TOKEN_BATCH_SIZE,
   },
   [Contract.cEur]: {
     contract: (kit) => kit.contracts.getStableToken(StableToken.cEUR),
-    batchSize: 500,
+    batchSize: ERC20_TOKEN_BATCH_SIZE,
   },
   [Contract.cReal]: {
     contract: (kit) => kit.contracts.getStableToken(StableToken.cREAL),
-    batchSize: 500,
+    batchSize: ERC20_TOKEN_BATCH_SIZE,
   },
   [Contract.mCUsd]: {
     contract: (kit) => kit.contracts.getErc20(MCUSD_ADDRESS!),
-    batchSize: 500,
+    batchSize: ERC20_TOKEN_BATCH_SIZE,
   },
   [Contract.mCEur]: {
     contract: (kit) => kit.contracts.getErc20(MCEUR_ADDRESS!),
-    batchSize: 500,
+    batchSize: ERC20_TOKEN_BATCH_SIZE,
   },
   [Contract.mCReal]: {
     contract: (kit) => kit.contracts.getErc20(MCREAL_ADDRESS!),
-    batchSize: 500,
+    batchSize: ERC20_TOKEN_BATCH_SIZE,
   },
   [Contract.celo]: {
     contract: (kit) => kit.contracts.getGoldToken(),
-    batchSize: 500,
+    batchSize: ERC20_TOKEN_BATCH_SIZE,
   },
 }
 
