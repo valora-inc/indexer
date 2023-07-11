@@ -3,6 +3,7 @@ import express from 'express'
 import { ENVIRONMENT, PORT, VERSION } from './config'
 import { initDatabase } from './database/db'
 import { pollers } from './polling'
+import { getStatusHandler } from './status'
 
 export default async function initApp(): Promise<express.Application> {
   console.info(
@@ -26,14 +27,7 @@ export default async function initApp(): Promise<express.Application> {
   app.get('/', (req: any, res: any) => {
     res.send('Celo Indexer. See /status for details.')
   })
-  app.get('/status', (req: any, res: any) => {
-    res.status(200).json({
-      version: VERSION,
-      serviceStartTime: new Date(START_TIME).toUTCString(),
-      serviceRunDuration:
-        Math.floor((Date.now() - START_TIME) / 60000) + ' minutes',
-    })
-  })
+  app.get('/status', getStatusHandler(START_TIME))
   app.get('/_ah/start', (req: any, res: any) => {
     res.status(200).end()
   })
