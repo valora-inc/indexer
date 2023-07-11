@@ -1,5 +1,6 @@
 const { spawn, spawnSync } = require('child_process')
 const db = require('./db')
+const fetch = require('node-fetch')
 
 const debug = false
 const createPostgresContainer = true
@@ -113,6 +114,16 @@ async function main() {
   console.log('Waiting for DB to have some contents...')
   const rows = await db.psql('SELECT * FROM transfers LIMIT 1;', 30)
   console.log(`DB has some contents: ${JSON.stringify(rows, null, 2)}`)
+
+  console.log('Fetching indexer status')
+  const statusResponse = await fetch('http://localhost:8080/status')
+  const { blocksBehind } = await statusResponse.json()
+  if (!blocksBehind || blocksBehind <= 0) {
+    throw new Error(
+      'blocksBehind should be greater than 0 for indexer that just started from block 1',
+    )
+  }
+  console.log(`Indexer is ${blocksBehind} blocks behind`)
 
   // TODO: run more checks on the DB to ensure things look reasonable.
   process.exit(0)
