@@ -14,6 +14,8 @@
     "format": "prettier --loglevel error --write \"./{src,bin/test}/**/*.ts\"",
     "lint": "eslint --ext=.tsx,.ts src/ test/ bin/",
     "e2e": "node e2e/run.js",
+    "run-local-db": "docker run --rm -p 5432:5432 -e POSTGRES_DB=indexer -e POSTGRES_PASSWORD=docker postgres",
+    "add-mock-data": "ts-node ./scripts/add-mock-recent-data.ts",
     "start": "node ./dist/bin/indexer.js",
     "start:local": "yarn build && cp config/config.local.env .env && node --inspect ./dist/bin/indexer.js"
   },
@@ -55,6 +57,7 @@
     "prettier": "^2.3.2",
     "sqlite3": "^5.0.2",
     "ts-jest": "^27.0.4",
+    "ts-node": "^10.9.1",
     "typescript": "~4.3.2"
   },
   "peerDependencies": {
