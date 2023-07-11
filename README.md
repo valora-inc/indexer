@@ -13,10 +13,16 @@ yarn
 
 ## Running locally
 
-Run a local PostgreSQL instance. For example:
+Run a local PostgreSQL instance:
 
 ```
-docker run --rm -p 5432:5432 -e POSTGRES_DB=indexer -e POSTGRES_PASSWORD=docker postgres
+yarn run-local-db
+```
+
+If you want to test "normal behavior", where the indexer is all caught up to the latest data, you can simulate this
+by running the add-mock-data script:
+```
+yarn add-mock-data
 ```
 
 Start the indexer:
