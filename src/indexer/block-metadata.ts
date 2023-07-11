@@ -2,9 +2,9 @@ import { database } from '../database/db'
 import { getContractKit } from '../util/utils'
 import { BLOCK_METADATA_DEFAULT_MIN_BLOCK_NUMBER } from '../config'
 
-const BLOCK_METADATA_TABLE_NAME = 'block_metadata'
-const BLOCK_NUMBER_COL_NAME = 'blockNumber'
-const BLOCK_TIMESTAMP_COL_NAME = 'blockTimestamp'
+export const BLOCK_METADATA_TABLE_NAME = 'block_metadata'
+export const BLOCK_NUMBER_COL_NAME = 'blockNumber'
+export const BLOCK_TIMESTAMP_COL_NAME = 'blockTimestamp'
 
 export async function handleBlockMetadata() {
   try {
