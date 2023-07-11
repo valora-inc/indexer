@@ -35,3 +35,4 @@ To change the web3 provider to QuickNode:
 - find the web3 provider url from the QuickNode dashboard. At time of writing the endpoint is located [here](https://dashboard.quicknode.com/endpoints/166850), see "HTTP Provider"
   - if you cannot access the QuickNode dashboard, ask an admin to add you. At time of writing, admins included Satish, Kathy, Silas, Charlie, Joe, and Jean.
 - add `WEB3_PROVIDER_URL` to [indexer-secrets](https://console.cloud.google.com/security/secret-manager/secret/indexer-secrets/versions?project=celo-mobile-mainnet)
+- redeploy the indexer for the changes to take effect
