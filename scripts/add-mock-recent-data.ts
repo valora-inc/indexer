@@ -21,13 +21,15 @@ async function main() {
 
   // block metadata
   const contractKit = await getContractKit()
-  const currentBlockNumber = await contractKit.web3.eth.getBlockNumber()
+  const recentBlockNumber = process.env.RECENT_BLOCK_NUMBER
+    ? process.env.RECENT_BLOCK_NUMBER // to make e2e tests more predictable (otherwise depends on events getting emitted while the test is taking place for certain contracts on alfajores)
+    : (await contractKit.web3.eth.getBlockNumber()) - 6 // 30 seconds behind
   const blockTimestamp = Number(
-    (await contractKit.web3.eth.getBlock(currentBlockNumber)).timestamp,
+    (await contractKit.web3.eth.getBlock(recentBlockNumber)).timestamp,
   )
   await database(BLOCK_METADATA_TABLE_NAME)
     .insert({
-      [BLOCK_NUMBER_COL_NAME]: currentBlockNumber,
+      [BLOCK_NUMBER_COL_NAME]: recentBlockNumber,
       [BLOCK_TIMESTAMP_COL_NAME]: blockTimestamp,
     })
     .onConflict(BLOCK_NUMBER_COL_NAME)
@@ -46,7 +48,7 @@ async function main() {
     await database(LAST_BLOCKS_TABLE_NAME)
       .insert({
         key,
-        lastBlock: currentBlockNumber,
+        lastBlock: recentBlockNumber,
       })
       .onConflict('key')
       .merge() // overwrite if exists
