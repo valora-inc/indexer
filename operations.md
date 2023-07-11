@@ -13,9 +13,14 @@ intervention.
 
 #### Symptoms
 
-Errors like this in the logs:
+You should see logs [here](https://console.cloud.google.com/logs/query;query=resource.type%3D%22gae_app%22%0Aresource.labels.module_id%3D%22indexer%22%0AtextPayload%3D~%22rate%20limit%22?project=celo-mobile-mainnet) related to rate limiting.
 
-TODO
+In case the link doesn't work, you can open Logs Explorer on the GCP console and paste the following query:
+```
+resource.type="gae_app"
+resource.labels.module_id="indexer"
+textPayload=~"rate limit"
+```
 
 #### Troubleshooting
 
