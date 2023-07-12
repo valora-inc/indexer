@@ -4,9 +4,10 @@ import { VERSION } from './config'
 import { Event } from './indexer'
 import { getContractKit } from './util/utils'
 import { Request, Response } from 'express'
+import { asyncRoute } from './util/async-route'
 
 export function getStatusHandler(startTime: number) {
-  return async (_req: Request, res: Response) => {
+  return asyncRoute(async (_req: Request, res: Response) => {
     const kit = await getContractKit()
     const curBlockNumber = await kit.web3.eth.getBlockNumber()
     const minTransferLastBlock = await database(LAST_BLOCKS_TABLE_NAME)
@@ -22,5 +23,5 @@ export function getStatusHandler(startTime: number) {
         ? curBlockNumber - (minTransferLastBlock[0].minLastBlock ?? 0)
         : curBlockNumber,
     })
-  }
+  })
 }
