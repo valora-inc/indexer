@@ -117,13 +117,28 @@ async function main() {
 
   console.log('Fetching indexer status')
   const statusResponse = await fetch('http://localhost:8080/status')
-  const { blocksBehind } = await statusResponse.json()
+  const { blocksBehind, blockWithinRange } = await statusResponse.json()
+  console.log(`Indexer is ${blocksBehind} blocks behind`)
   if (!blocksBehind || blocksBehind <= 0) {
     throw new Error(
       'blocksBehind should be greater than 0 for indexer that just started from block 1',
     )
   }
-  console.log(`Indexer is ${blocksBehind} blocks behind`)
+  if (blockWithinRange === undefined || blockWithinRange === true) {
+    throw new Error(
+      'blockWithinRange should be false for indexer that just started from block 1',
+    )
+  }
+
+  const statusResponse2 = await fetch(
+    'http://localhost:8080/status?max_blocks_behind=10000000000', // should not get here for another 1,582 years
+  )
+  const { blockWithinRange: blockWithinRange2 } = await statusResponse2.json()
+  if (!blockWithinRange2) {
+    throw new Error(
+      `blockWithinRange should be true for extremely high max_blocks_behind`,
+    )
+  }
 
   // TODO: run more checks on the DB to ensure things look reasonable.
   process.exit(0)
