@@ -5,7 +5,9 @@ dotenv.config()
 
 export const VERSION = process.env.GAE_VERSION
 export const ENVIRONMENT = process.env.ENVIRONMENT
-export const PORT = Number(process.env.PORT) || 8080
+// App engine is setting the PORT to 8081 which doesn't work. hardcoding to 8080
+// works, TODO(any): resolve this once we hear back from google
+export const PORT = 8080
 export const DEFAULT_LOCALE = process.env.DEFAULT_LOCALE
 export const INVITES_POLLING_INTERVAL =
   Number(process.env.INVITES_POLLING_INTERVAL) || 60000
