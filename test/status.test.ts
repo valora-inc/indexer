@@ -49,6 +49,7 @@ describe('status', () => {
     await getStatusHandler(mockStartTime)(
       {} as unknown as Request,
       mockResponse as unknown as Response,
+      jest.fn(),
     )
     expect(mockResponse.status).toBeCalledWith(200)
     expect(mockResponse.json).toBeCalledWith({
