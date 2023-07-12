@@ -32,6 +32,10 @@ describe('getStatusHandler', () => {
         key: 'testToken2_Transfer',
         lastBlock: 10,
       },
+      {
+        key: 'Escrow_Transfer',
+        lastBlock: 1, // this is behind, but should be excluded
+      },
     ])
     jest.clearAllMocks()
     mocked(getContractKit).mockResolvedValue(mockContractKit)
