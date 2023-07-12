@@ -6,6 +6,7 @@ export function asyncRoute(handler: express.Handler) {
     res: express.Response,
     next: express.NextFunction,
   ) => {
-    Promise.resolve(handler(req, res, next)).catch(next)
+    // returns to make testing more straightforward. the output is not actually needed.
+    return Promise.resolve(handler(req, res, next)).catch(next)
   }
 }
