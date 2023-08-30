@@ -80,6 +80,8 @@ jobs:
           export_default_credentials: true
       - name: Deploy App
         run: gcloud app deploy app.alfajores.yaml --project=celo-mobile-alfajores --version="git-$(git rev-parse --short HEAD)" --quiet --promote --stop-previous-version
+      - name: Cleanup Versions
+        run: yarn cleanup-versions --service indexer --num-versions 5
   deploy-mainnet:
     name: Deploy mainnet
     if: github.ref == 'refs/heads/main'
@@ -97,3 +99,5 @@ jobs:
           export_default_credentials: true
       - name: Deploy App
         run: gcloud app deploy app.mainnet.yaml --project=celo-mobile-mainnet --version="git-$(git rev-parse --short HEAD)" --quiet --promote --stop-previous-version
+      - name: Cleanup Versions
+        run: yarn cleanup-versions --service indexer --num-versions 5
