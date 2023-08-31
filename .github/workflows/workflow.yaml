@@ -78,6 +78,7 @@ jobs:
         with:
           service_account_key: ${{ secrets.ALFAJORES_SERVICE_ACCOUNT_KEY }}
           export_default_credentials: true
+      - run: yarn
       - name: Deploy App
         run: gcloud app deploy app.alfajores.yaml --project=celo-mobile-alfajores --version="git-$(git rev-parse --short HEAD)" --quiet --promote --stop-previous-version
       - name: Cleanup Versions
@@ -97,6 +98,7 @@ jobs:
         with:
           service_account_key: ${{ secrets.MAINNET_SERVICE_ACCOUNT_KEY }}
           export_default_credentials: true
+      - run: yarn
       - name: Deploy App
         run: gcloud app deploy app.mainnet.yaml --project=celo-mobile-mainnet --version="git-$(git rev-parse --short HEAD)" --quiet --promote --stop-previous-version
       - name: Cleanup Versions
