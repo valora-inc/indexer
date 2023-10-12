@@ -64,42 +64,42 @@ jobs:
       - run: yarn
       - run: yarn build
       - run: yarn e2e
-  deploy-alfajores:
-    name: Deploy alfajores
-    if: github.ref == 'refs/heads/main'
-    needs:
-      - unit
-      - lint
-      - end-to-end
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: google-github-actions/setup-gcloud@v0
-        with:
-          service_account_key: ${{ secrets.ALFAJORES_SERVICE_ACCOUNT_KEY }}
-          export_default_credentials: true
-      - run: yarn
-      - name: Deploy App
-        run: gcloud app deploy app.alfajores.yaml --project=celo-mobile-alfajores --version="git-$(git rev-parse --short HEAD)" --quiet --promote --stop-previous-version
-      - name: Cleanup Versions
-        run: yarn cleanup-versions --service indexer --num-versions 5
-  deploy-mainnet:
-    name: Deploy mainnet
-    if: github.ref == 'refs/heads/main'
-    needs:
-      - unit
-      - lint
-      - end-to-end
-      - deploy-alfajores
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: google-github-actions/setup-gcloud@v0
-        with:
-          service_account_key: ${{ secrets.MAINNET_SERVICE_ACCOUNT_KEY }}
-          export_default_credentials: true
-      - run: yarn
-      - name: Deploy App
-        run: gcloud app deploy app.mainnet.yaml --project=celo-mobile-mainnet --version="git-$(git rev-parse --short HEAD)" --quiet --promote --stop-previous-version
-      - name: Cleanup Versions
-        run: yarn cleanup-versions --service indexer --num-versions 5
+#  deploy-alfajores:
+#    name: Deploy alfajores
+#    if: github.ref == 'refs/heads/main'
+#    needs:
+#      - unit
+#      - lint
+#      - end-to-end
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: google-github-actions/setup-gcloud@v0
+#        with:
+#          service_account_key: ${{ secrets.ALFAJORES_SERVICE_ACCOUNT_KEY }}
+#          export_default_credentials: true
+#      - run: yarn
+#      - name: Deploy App
+#        run: gcloud app deploy app.alfajores.yaml --project=celo-mobile-alfajores --version="git-$(git rev-parse --short HEAD)" --quiet --promote --stop-previous-version
+#      - name: Cleanup Versions
+#        run: yarn cleanup-versions --service indexer --num-versions 5
+#  deploy-mainnet:
+#    name: Deploy mainnet
+#    if: github.ref == 'refs/heads/main'
+#    needs:
+#      - unit
+#      - lint
+#      - end-to-end
+#      - deploy-alfajores
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: google-github-actions/setup-gcloud@v0
+#        with:
+#          service_account_key: ${{ secrets.MAINNET_SERVICE_ACCOUNT_KEY }}
+#          export_default_credentials: true
+#      - run: yarn
+#      - name: Deploy App
+#        run: gcloud app deploy app.mainnet.yaml --project=celo-mobile-mainnet --version="git-$(git rev-parse --short HEAD)" --quiet --promote --stop-previous-version
+#      - name: Cleanup Versions
+#        run: yarn cleanup-versions --service indexer --num-versions 5
