@@ -20,7 +20,7 @@
     "start:local": "yarn build && cp config/config.local.env .env && node --inspect ./dist/bin/indexer.js"
   },
   "dependencies": {
-    "@celo/base": "1.5.1",
+    "@celo/base": "1.5.2",
     "@celo/contractkit": "1.5.1",
     "@celo/utils": "1.5.1",
     "@ethersproject/abi": "5.0.4",
