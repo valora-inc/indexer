@@ -22,7 +22,7 @@
   "dependencies": {
     "@celo/base": "1.5.1",
     "@celo/contractkit": "1.5.1",
-    "@celo/utils": "1.5.1",
+    "@celo/utils": "1.5.2",
     "@ethersproject/abi": "5.0.4",
     "@google-cloud/secret-manager": "^3.9.0",
     "async-polling": "^0.2.1",
